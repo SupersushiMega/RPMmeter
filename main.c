@@ -38,9 +38,11 @@
 ISR (TIMER1_COMPA_vect);
 
 
-volatile uint8_t ISR_counter = 0;
-volatile uint16_t ms = 0;
-volatile uint16_t msUntilInput = 0;
+volatile uint8_t ISR_counter = 0;	//Counter for Timer cycles
+volatile uint16_t ms = 0;	//ms counter for RPS measurment
+volatile uint16_t msMotStart = 0;	//ms counter for the time used for spinning up the motor
+volatile uint8_t msUntilInput = 0;	//ms counter for button debounce
+
 ISR (TIMER0_OVF_vect)
 {
 	ISR_counter++;
@@ -50,6 +52,10 @@ ISR (TIMER0_OVF_vect)
 		if (msUntilInput)
 		{
 			msUntilInput--;
+		}
+		if (msMotStart)
+		{
+			msMotStart--;
 		}
 		ISR_counter = 0;
 	}
@@ -110,83 +116,96 @@ int main(void)
     
     DDRC |= (1<<PC3);	//Set PC3 as Output
     
-    uint8_t cycleCounter = 0;
-    uint8_t PWMcounter = 0;
-    uint8_t PWMedge = PWM_MIN;
+    uint8_t cycleCounter = 0;	//counter used to detect if it has been 8 cycles since last PWMcounter increase
+    uint8_t PWMcounter = 0;	//Counter used to define Position of PWM
+    uint8_t PWMedge = 0;	//Variable which defines the point where the PWM switches from high to low
     
-    uint8_t Input = 0;
-    uint8_t LastInput = 0;
+    uint8_t Input = 0;	//Variable used to store current user input
+    uint8_t LastInput = 0;	//Variable used to store the last processed user input
     
-    uint8_t FullRotationLast = 0;
-    uint8_t FullRotation = 0;
+    uint8_t FullRotation = 0;	//variable used to store the curent status of rotation sensor
+    uint8_t FullRotationLast = 0;	//variable used to store the status of Rotation sensor in the last cycle
     
-    uint8_t RPScounter = 0;
-    uint16_t RPM = 0;
+    uint8_t RPScounter = 0;	//Counter used to count the completed Rotations in a second
+    uint8_t LastRPS = 0;	//Variable used to store the RPS in the last transsmission to PC
+    uint16_t RPM = 0;	//Variable used to store the calculated RPM
     
 	while(1)
 	{ 
-		Input = PINC;
-		FullRotation = (PIND & (1<<PD2));
-		cycleCounter++;
-		if ((cycleCounter % 8) == 0)
+		Input = PINC;	//Get user input
+		FullRotation = (PIND & (1<<PD2));	//get status of Rotation sensor
+		cycleCounter++;	//Increase Cycle counter by 1
+		
+		if ((cycleCounter % 8) == 0)	//Check if it has been 8 cycles since last PWMcounter increase to reduce PWM frequency
 		{
 			PWMcounter++;
 		}
-		if(!msUntilInput)
+		
+		if((!LastRPS && PWMedge) || msMotStart)	//Check if motor is turning when it should be turning or if it is currently spinning up
 		{
-			if((Input & SpeedMinusMask) & ~(LastInput & SpeedMinusMask))
+			PWM_ON;	//Turn PWM on
+			if(!msMotStart)	//check if the spin up process is already started
 			{
-				if(PWMedge > PWM_MIN)
+				msMotStart = 500;	//if no spin up process has been started yet set the spin up time to 500
+			}
+		}
+		
+		else if(!msUntilInput)	//Check if enough time has passed since last input for debouncing
+		{
+			if((Input & SpeedMinusMask) & ~(LastInput & SpeedMinusMask))	//Check for a rising edge on the Speed- Pin
+			{
+				if(PWMedge > PWM_MIN)	//Check if PWMedge is greater than the minimum
 				{
-					PWMedge -= 10;
+					PWMedge -= 10;	//Reduce PWMedge by 10
 				}
 				else
 				{
-					PWMedge = 0;
+					PWMedge = 0;	//if PWMedge is below minimum set PWMedge to 0
 				}
-				msUntilInput = 10;
+				msUntilInput = 10;	//Set time until next input will be processed
 			}
-			else if((Input & SpeedPlusMask) & ~(LastInput & SpeedPlusMask))
+			else if((Input & SpeedPlusMask) & ~(LastInput & SpeedPlusMask))	//Check for a rising edge on the Speed+ Pin
 			{
-				if((PWMedge + 10) < 256)
+				if((PWMedge + 10) < 256)	//Check if PWMedge has enough space to increase by 10
 				{
-					if(PWMedge < PWM_MIN)
+					if(PWMedge < PWM_MIN)	//Check if PWMedge is bellow the minimum
 					{
-						PWMedge = PWM_MIN;
+						PWMedge = PWM_MIN;	//Set PWM to minimum if PWMedge is inreased from below the minimum
 					}
 					else
 					{
-						PWMedge += 10;
+						PWMedge += 10;	//Increase PWMedge by 10
 					}
 				}
-				msUntilInput = 10;
+				msUntilInput = 10;	//Set time until next input will be processed
 			}
-			LastInput = Input;
+			LastInput = Input;	//Store current Input
 		}
 		
-		if(!FullRotation && FullRotationLast)
+		if(!FullRotation && FullRotationLast)	//Check for a falling edge by the Rotation sensor
 		{
-			RPScounter++;
+			RPScounter++;	//Increase RPS couner
 		}
 		
-		FullRotationLast = FullRotation;
+		FullRotationLast = FullRotation;	//Store current status of Rotation sensor
 		
-		if(ms >= 1000)
+		if(PWMcounter <= PWMedge)	//Check if PWM should be low or high
 		{
-			RPM = RPScounter * 60;
-			uart_send_numb(RPM);
-			uart_send_char('RPM \n');
-			RPScounter = 0;
-			ms = 0;
-		}
-		
-		if(PWMcounter <= PWMedge)
-		{
-			PWM_ON;
+			PWM_ON;	//set PWM to high
 		}
 		else
 		{
-			PWM_OFF;
+			PWM_OFF;	//set PWM to high
+		}
+		
+		if(ms >= 1000)	//Check if a second has passed since last transsmission to PC
+		{
+			RPM = RPScounter * 60;	//Calculate RPM from RPS
+			uart_send_numb(RPM);	//Send RPM data
+			uart_send_char('\n');	//Send newline
+			LastRPS = RPScounter;	//Store the current RPS value
+			RPScounter = 0;	//Set RPScounter to 0
+			ms = 0;	//Set ms counter to 0
 		}
 	} //end while
 	return 0;
