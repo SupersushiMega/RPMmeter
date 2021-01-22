@@ -32,7 +32,7 @@
 #define PWM_ON (PORTC |= (1<<PC3))
 #define PWM_OFF (PORTC &= ~(1<<PC3))
 
-#define PWM_MIN 71
+#define PWM_MIN 50
 
 //TIMER
 ISR (TIMER1_COMPA_vect);
@@ -136,7 +136,7 @@ int main(void)
 		FullRotation = (PIND & (1<<PD2));	//get status of Rotation sensor
 		cycleCounter++;	//Increase Cycle counter by 1
 		
-		if ((cycleCounter % 8) == 0)	//Check if it has been 8 cycles since last PWMcounter increase to reduce PWM frequency
+		if ((cycleCounter % 16) == 0)	//Check if it has been 8 cycles since last PWMcounter increase to reduce PWM frequency
 		{
 			PWMcounter++;
 		}
@@ -146,11 +146,19 @@ int main(void)
 			PWM_ON;	//Turn PWM on
 			if(!msMotStart)	//check if the spin up process is already started
 			{
-				msMotStart = 500;	//if no spin up process has been started yet set the spin up time to 500
+				msMotStart = 100;	//if no spin up process has been started yet set the spin up time to 500
 			}
 		}
+		else if(PWMcounter <= PWMedge)	//Check if PWM should be low or high
+		{
+			PWM_ON;	//set PWM to high
+		}
+		else
+		{
+			PWM_OFF;	//set PWM to high
+		}
 		
-		else if(!msUntilInput)	//Check if enough time has passed since last input for debouncing
+		if(!msUntilInput)	//Check if enough time has passed since last input for debouncing
 		{
 			if((Input & SpeedMinusMask) & ~(LastInput & SpeedMinusMask))	//Check for a rising edge on the Speed- Pin
 			{
@@ -188,15 +196,6 @@ int main(void)
 		}
 		
 		FullRotationLast = FullRotation;	//Store current status of Rotation sensor
-		
-		if(PWMcounter <= PWMedge)	//Check if PWM should be low or high
-		{
-			PWM_ON;	//set PWM to high
-		}
-		else
-		{
-			PWM_OFF;	//set PWM to high
-		}
 		
 		if(ms >= 1000)	//Check if a second has passed since last transsmission to PC
 		{

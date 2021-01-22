@@ -459,9 +459,9 @@ int main(void)
 			PWM_ON;	//Turn PWM on
 			if(!msMotStart)	//check if the spin up process is already started
 			{
-				msMotStart = 500;	//if no spin up process has been started yet set the spin up time to 500
- 284:	c4 ef       	ldi	r28, 0xF4	; 244
- 286:	d1 e0       	ldi	r29, 0x01	; 1
+				msMotStart = 100;	//if no spin up process has been started yet set the spin up time to 500
+ 284:	c4 e6       	ldi	r28, 0x64	; 100
+ 286:	d0 e0       	ldi	r29, 0x00	; 0
 					else
 					{
 						PWMedge += 10;	//Increase PWMedge by 10
@@ -478,7 +478,7 @@ int main(void)
 			uart_send_numb(RPM);	//Send RPM data
  28c:	9c e3       	ldi	r25, 0x3C	; 60
  28e:	a9 2e       	mov	r10, r25
-		if ((cycleCounter % 8) == 0)	//Check if it has been 8 cycles since last PWMcounter increase to reduce PWM frequency
+		if ((cycleCounter % 16) == 0)	//Check if it has been 8 cycles since last PWMcounter increase to reduce PWM frequency
 		{
 			PWMcounter++;
 		}
@@ -497,7 +497,7 @@ int main(void)
  2a2:	89 2b       	or	r24, r25
  2a4:	21 f4       	brne	.+8      	; 0x2ae <main+0xb4>
 			{
-				msMotStart = 500;	//if no spin up process has been started yet set the spin up time to 500
+				msMotStart = 100;	//if no spin up process has been started yet set the spin up time to 500
  2a6:	d0 93 08 01 	sts	0x0108, r29
  2aa:	c0 93 07 01 	sts	0x0107, r28
 				msUntilInput = 10;	//Set time until next input will be processed
@@ -574,10 +574,10 @@ void uart_send_char(char c)
 		cycleCounter++;	//Increase Cycle counter by 1
  2f2:	1f 5f       	subi	r17, 0xFF	; 255
 		
-		if ((cycleCounter % 8) == 0)	//Check if it has been 8 cycles since last PWMcounter increase to reduce PWM frequency
+		if ((cycleCounter % 16) == 0)	//Check if it has been 8 cycles since last PWMcounter increase to reduce PWM frequency
  2f4:	81 2f       	mov	r24, r17
  2f6:	90 e0       	ldi	r25, 0x00	; 0
- 2f8:	87 70       	andi	r24, 0x07	; 7
+ 2f8:	8f 70       	andi	r24, 0x0F	; 15
  2fa:	90 70       	andi	r25, 0x00	; 0
  2fc:	89 2b       	or	r24, r25
  2fe:	09 f4       	brne	.+2      	; 0x302 <main+0x108>
@@ -593,7 +593,7 @@ void uart_send_char(char c)
  302:	f0 2f       	mov	r31, r16
  304:	02 2f       	mov	r16, r18
  306:	04 70       	andi	r16, 0x04	; 4
-		if ((cycleCounter % 8) == 0)	//Check if it has been 8 cycles since last PWMcounter increase to reduce PWM frequency
+		if ((cycleCounter % 16) == 0)	//Check if it has been 8 cycles since last PWMcounter increase to reduce PWM frequency
 		{
 			PWMcounter++;
 		}
@@ -607,7 +607,7 @@ void uart_send_char(char c)
  316:	09 f0       	breq	.+2      	; 0x31a <main+0x120>
  318:	bf cf       	rjmp	.-130    	; 0x298 <main+0x9e>
 			{
-				msMotStart = 500;	//if no spin up process has been started yet set the spin up time to 500
+				msMotStart = 100;	//if no spin up process has been started yet set the spin up time to 500
 			}
 		}
 		
@@ -635,7 +635,7 @@ void uart_send_char(char c)
  340:	51 f0       	breq	.+20     	; 0x356 <main+0x15c>
 			{
 				if(PWMedge > PWM_MIN)	//Check if PWMedge is greater than the minimum
- 342:	27 e4       	ldi	r18, 0x47	; 71
+ 342:	22 e3       	ldi	r18, 0x32	; 50
  344:	2f 15       	cp	r18, r15
  346:	e0 f0       	brcs	.+56     	; 0x380 <main+0x186>
  348:	ff 24       	eor	r15, r15
@@ -681,10 +681,10 @@ void uart_send_char(char c)
  372:	5c f7       	brge	.-42     	; 0x34a <main+0x150>
 				{
 					if(PWMedge < PWM_MIN)	//Check if PWMedge is bellow the minimum
- 374:	26 e4       	ldi	r18, 0x46	; 70
+ 374:	21 e3       	ldi	r18, 0x31	; 49
  376:	2f 15       	cp	r18, r15
  378:	30 f0       	brcs	.+12     	; 0x386 <main+0x18c>
- 37a:	87 e4       	ldi	r24, 0x47	; 71
+ 37a:	82 e3       	ldi	r24, 0x32	; 50
  37c:	f8 2e       	mov	r15, r24
  37e:	e5 cf       	rjmp	.-54     	; 0x34a <main+0x150>
 		{

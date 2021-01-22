@@ -328,11 +328,11 @@
  348 01cc 09B1      		in r16,41-32
  349               	.LVL9:
  350 01ce 0470      		andi r16,lo8(4)
- 351 01d0 DD24      		clr r13
+ 351 01d0 CC24      		clr r12
  352               	.LVL10:
  353 01d2 FF24      		clr r15
  354               	.LVL11:
- 355 01d4 CC24      		clr r12
+ 355 01d4 DD24      		clr r13
  356               	.LVL12:
  357 01d6 F0E0      		ldi r31,lo8(0)
  358               	.LVL13:
@@ -343,8 +343,8 @@
  363 01dc 11E0      		ldi r17,lo8(1)
  364               	.LVL16:
  365               	.LM52:
- 366 01de C4EF      		ldi r28,lo8(500)
- 367 01e0 D1E0      		ldi r29,hi8(500)
+ 366 01de C4E6      		ldi r28,lo8(100)
+ 367 01e0 D0E0      		ldi r29,hi8(100)
  368               	.LM53:
  369 01e2 2AE0      		ldi r18,lo8(10)
  370 01e4 B22E      		mov r11,r18
@@ -353,218 +353,222 @@
  373 01e8 A92E      		mov r10,r25
  374               	.LM55:
  375 01ea AA23      		tst r26
- 376 01ec 01F4      		brne .L29
- 377               	.LVL17:
- 378               	.L47:
- 379 01ee FF20      		tst r15
- 380 01f0 01F0      		breq .L29
- 381               	.L30:
- 382               	.LM56:
- 383 01f2 439A      		sbi 40-32,3
- 384               	.LM57:
- 385 01f4 8091 0000 		lds r24,msMotStart
- 386 01f8 9091 0000 		lds r25,(msMotStart)+1
- 387 01fc 892B      		or r24,r25
- 388 01fe 01F4      		brne .L32
- 389               	.LM58:
- 390 0200 D093 0000 		sts (msMotStart)+1,r29
- 391 0204 C093 0000 		sts msMotStart,r28
- 392               	.LVL18:
- 393               	.L32:
- 394               	.LM59:
- 395 0208 0023      		tst r16
- 396 020a 01F4      		brne .L39
- 397 020c F111      		cpse r31,__zero_reg__
- 398               	.LM60:
- 399 020e E394      		inc r14
- 400               	.L39:
- 401               	.LM61:
- 402 0210 FD14      		cp r15,r13
- 403 0212 00F4      		brsh .+2
- 404 0214 00C0      		rjmp .L40
- 405               	.LM62:
- 406 0216 439A      		sbi 40-32,3
- 407               	.L41:
- 408               	.LM63:
- 409 0218 8091 0000 		lds r24,ms
- 410 021c 9091 0000 		lds r25,(ms)+1
- 411 0220 885E      		subi r24,lo8(1000)
- 412 0222 9340      		sbci r25,hi8(1000)
- 413 0224 00F0      		brlo .L42
- 414               	.LM64:
- 415 0226 EA9C      		mul r14,r10
- 416 0228 C001      		movw r24,r0
- 417 022a 1124      		clr r1
- 418 022c 0E94 0000 		call uart_send_numb
- 419               	.LVL19:
- 420               	.L43:
- 421               	.LBB8:
- 422               	.LBB9:
- 423               	.LM65:
- 424 0230 8091 C000 		lds r24,192
- 425 0234 85FF      		sbrs r24,5
- 426 0236 00C0      		rjmp .L43
- 427               	.LM66:
- 428 0238 B092 C600 		sts 198,r11
- 429               	.LBE9:
- 430               	.LBE8:
- 431               	.LM67:
- 432 023c 1092 0000 		sts (ms)+1,__zero_reg__
- 433 0240 1092 0000 		sts ms,__zero_reg__
- 434 0244 AE2D      		mov r26,r14
- 435               	.LVL20:
- 436 0246 EE24      		clr r14
- 437               	.LVL21:
- 438               	.L42:
- 439               	.LM68:
- 440 0248 E6B1      		in r30,38-32
- 441               	.LM69:
- 442 024a 29B1      		in r18,41-32
- 443               	.LM70:
- 444 024c 1F5F      		subi r17,lo8(-(1))
- 445               	.LM71:
- 446 024e 812F      		mov r24,r17
- 447 0250 90E0      		ldi r25,lo8(0)
- 448               	.LVL22:
- 449 0252 8770      		andi r24,lo8(7)
- 450 0254 9070      		andi r25,hi8(7)
- 451               	.LVL23:
- 452 0256 892B      		or r24,r25
- 453 0258 01F4      		brne .L28
- 454               	.LM72:
- 455 025a D394      		inc r13
- 456               	.L28:
- 457               	.LM73:
- 458 025c F02F      		mov r31,r16
- 459 025e 022F      		mov r16,r18
- 460 0260 0470      		andi r16,lo8(4)
- 461               	.LM74:
- 462 0262 AA23      		tst r26
- 463 0264 01F0      		breq .L47
- 464               	.LVL24:
- 465               	.L29:
- 466 0266 8091 0000 		lds r24,msMotStart
- 467 026a 9091 0000 		lds r25,(msMotStart)+1
- 468               	.LVL25:
- 469 026e 892B      		or r24,r25
- 470 0270 01F0      		breq .+2
- 471 0272 00C0      		rjmp .L30
- 472               	.LM75:
- 473 0274 8091 0000 		lds r24,msUntilInput
- 474 0278 8823      		tst r24
- 475 027a 01F4      		brne .L32
- 476               	.LM76:
- 477 027c 6E2F      		mov r22,r30
- 478 027e 70E0      		ldi r23,lo8(0)
- 479 0280 4C2D      		mov r20,r12
- 480 0282 50E0      		ldi r21,lo8(0)
- 481 0284 9B01      		movw r18,r22
- 482 0286 2170      		andi r18,lo8(1)
- 483 0288 3070      		andi r19,hi8(1)
- 484 028a CA01      		movw r24,r20
- 485 028c 8170      		andi r24,lo8(1)
- 486 028e 9070      		andi r25,hi8(1)
- 487 0290 8095      		com r24
- 488 0292 9095      		com r25
- 489 0294 2823      		and r18,r24
- 490 0296 3923      		and r19,r25
- 491 0298 232B      		or r18,r19
- 492 029a 01F0      		breq .L33
- 493               	.LM77:
- 494 029c 27E4      		ldi r18,lo8(71)
- 495 029e 2F15      		cp r18,r15
- 496 02a0 00F0      		brlo .L34
- 497 02a2 FF24      		clr r15
- 498               	.LVL26:
- 499               	.L37:
- 500               	.LM78:
- 501 02a4 B092 0000 		sts msUntilInput,r11
- 502               	.L46:
- 503 02a8 CE2E      		mov r12,r30
- 504 02aa 00C0      		rjmp .L32
- 505               	.L40:
- 506               	.LM79:
- 507 02ac 4398      		cbi 40-32,3
- 508 02ae 00C0      		rjmp .L41
- 509               	.LVL27:
- 510               	.L33:
- 511               	.LM80:
- 512 02b0 6270      		andi r22,lo8(2)
- 513 02b2 7070      		andi r23,hi8(2)
- 514 02b4 4270      		andi r20,lo8(2)
- 515 02b6 5070      		andi r21,hi8(2)
- 516 02b8 4095      		com r20
- 517 02ba 5095      		com r21
- 518 02bc 6423      		and r22,r20
- 519 02be 7523      		and r23,r21
- 520 02c0 672B      		or r22,r23
- 521 02c2 01F0      		breq .L46
- 522               	.LM81:
- 523 02c4 8F2D      		mov r24,r15
- 524 02c6 90E0      		ldi r25,lo8(0)
- 525               	.LVL28:
- 526 02c8 863F      		cpi r24,246
- 527 02ca 9105      		cpc r25,__zero_reg__
- 528 02cc 04F4      		brge .L37
- 529               	.LVL29:
- 530               	.LM82:
- 531 02ce 26E4      		ldi r18,lo8(70)
- 532 02d0 2F15      		cp r18,r15
- 533 02d2 00F0      		brlo .L38
- 534               	.LVL30:
- 535 02d4 87E4      		ldi r24,lo8(71)
- 536 02d6 F82E      		mov r15,r24
- 537 02d8 00C0      		rjmp .L37
- 538               	.LVL31:
- 539               	.L34:
- 540               	.LM83:
- 541 02da 86EF      		ldi r24,lo8(-10)
- 542 02dc F80E      		add r15,r24
- 543 02de 00C0      		rjmp .L37
- 544               	.LVL32:
- 545               	.L38:
- 546               	.LM84:
- 547 02e0 8AE0      		ldi r24,lo8(10)
- 548 02e2 F80E      		add r15,r24
- 549 02e4 00C0      		rjmp .L37
- 550               	.LFE9:
- 552               	.global	ISR_counter
- 553               	.global	ISR_counter
- 554               		.section .bss
- 557               	ISR_counter:
- 558 0000 00        		.skip 1,0
- 559               	.global	ms
- 560               	.global	ms
- 563               	ms:
- 564 0001 0000      		.skip 2,0
- 565               	.global	msMotStart
- 566               	.global	msMotStart
- 569               	msMotStart:
- 570 0003 0000      		.skip 2,0
- 571               	.global	msUntilInput
- 572               	.global	msUntilInput
- 575               	msUntilInput:
- 576 0005 00        		.skip 1,0
- 649               	.Letext0:
+ 376 01ec 01F0      		breq .+2
+ 377 01ee 00C0      		rjmp .L29
+ 378               	.LVL17:
+ 379               	.L47:
+ 380 01f0 FF20      		tst r15
+ 381 01f2 01F4      		brne .+2
+ 382 01f4 00C0      		rjmp .L29
+ 383               	.L30:
+ 384               	.LM56:
+ 385 01f6 439A      		sbi 40-32,3
+ 386               	.LM57:
+ 387 01f8 8091 0000 		lds r24,msMotStart
+ 388 01fc 9091 0000 		lds r25,(msMotStart)+1
+ 389 0200 892B      		or r24,r25
+ 390 0202 01F4      		brne .L32
+ 391               	.LM58:
+ 392 0204 D093 0000 		sts (msMotStart)+1,r29
+ 393 0208 C093 0000 		sts msMotStart,r28
+ 394               	.L32:
+ 395               	.LM59:
+ 396 020c 8091 0000 		lds r24,msUntilInput
+ 397 0210 8823      		tst r24
+ 398 0212 01F4      		brne .L34
+ 399               	.LM60:
+ 400 0214 6E2F      		mov r22,r30
+ 401 0216 70E0      		ldi r23,lo8(0)
+ 402 0218 4D2D      		mov r20,r13
+ 403 021a 50E0      		ldi r21,lo8(0)
+ 404 021c 9B01      		movw r18,r22
+ 405 021e 2170      		andi r18,lo8(1)
+ 406 0220 3070      		andi r19,hi8(1)
+ 407 0222 CA01      		movw r24,r20
+ 408 0224 8170      		andi r24,lo8(1)
+ 409 0226 9070      		andi r25,hi8(1)
+ 410 0228 8095      		com r24
+ 411 022a 9095      		com r25
+ 412 022c 2823      		and r18,r24
+ 413 022e 3923      		and r19,r25
+ 414 0230 232B      		or r18,r19
+ 415 0232 01F4      		brne .+2
+ 416 0234 00C0      		rjmp .L35
+ 417               	.LM61:
+ 418 0236 22E3      		ldi r18,lo8(50)
+ 419 0238 2F15      		cp r18,r15
+ 420 023a 00F4      		brsh .+2
+ 421 023c 00C0      		rjmp .L36
+ 422 023e FF24      		clr r15
+ 423               	.LVL18:
+ 424               	.L39:
+ 425               	.LM62:
+ 426 0240 B092 0000 		sts msUntilInput,r11
+ 427               	.L46:
+ 428 0244 DE2E      		mov r13,r30
+ 429               	.L34:
+ 430               	.LM63:
+ 431 0246 0023      		tst r16
+ 432 0248 01F4      		brne .L41
+ 433 024a F111      		cpse r31,__zero_reg__
+ 434               	.LM64:
+ 435 024c E394      		inc r14
+ 436               	.L41:
+ 437               	.LM65:
+ 438 024e 8091 0000 		lds r24,ms
+ 439 0252 9091 0000 		lds r25,(ms)+1
+ 440 0256 885E      		subi r24,lo8(1000)
+ 441 0258 9340      		sbci r25,hi8(1000)
+ 442 025a 00F0      		brlo .L42
+ 443               	.LM66:
+ 444 025c EA9C      		mul r14,r10
+ 445 025e C001      		movw r24,r0
+ 446 0260 1124      		clr r1
+ 447 0262 0E94 0000 		call uart_send_numb
+ 448               	.LVL19:
+ 449               	.L43:
+ 450               	.LBB8:
+ 451               	.LBB9:
+ 452               	.LM67:
+ 453 0266 8091 C000 		lds r24,192
+ 454 026a 85FF      		sbrs r24,5
+ 455 026c 00C0      		rjmp .L43
+ 456               	.LM68:
+ 457 026e B092 C600 		sts 198,r11
+ 458               	.LBE9:
+ 459               	.LBE8:
+ 460               	.LM69:
+ 461 0272 1092 0000 		sts (ms)+1,__zero_reg__
+ 462 0276 1092 0000 		sts ms,__zero_reg__
+ 463 027a AE2D      		mov r26,r14
+ 464               	.LVL20:
+ 465 027c EE24      		clr r14
+ 466               	.LVL21:
+ 467               	.L42:
+ 468               	.LM70:
+ 469 027e E6B1      		in r30,38-32
+ 470               	.LM71:
+ 471 0280 29B1      		in r18,41-32
+ 472               	.LM72:
+ 473 0282 1F5F      		subi r17,lo8(-(1))
+ 474               	.LM73:
+ 475 0284 812F      		mov r24,r17
+ 476 0286 90E0      		ldi r25,lo8(0)
+ 477               	.LVL22:
+ 478 0288 8F70      		andi r24,lo8(15)
+ 479 028a 9070      		andi r25,hi8(15)
+ 480               	.LVL23:
+ 481 028c 892B      		or r24,r25
+ 482 028e 01F4      		brne .L28
+ 483               	.LM74:
+ 484 0290 C394      		inc r12
+ 485               	.L28:
+ 486               	.LM75:
+ 487 0292 F02F      		mov r31,r16
+ 488 0294 022F      		mov r16,r18
+ 489 0296 0470      		andi r16,lo8(4)
+ 490               	.LM76:
+ 491 0298 AA23      		tst r26
+ 492 029a 01F4      		brne .+2
+ 493 029c 00C0      		rjmp .L47
+ 494               	.LVL24:
+ 495               	.L29:
+ 496 029e 8091 0000 		lds r24,msMotStart
+ 497 02a2 9091 0000 		lds r25,(msMotStart)+1
+ 498               	.LVL25:
+ 499 02a6 892B      		or r24,r25
+ 500 02a8 01F0      		breq .+2
+ 501 02aa 00C0      		rjmp .L30
+ 502               	.LM77:
+ 503 02ac FC14      		cp r15,r12
+ 504 02ae 00F0      		brlo .L33
+ 505               	.LM78:
+ 506 02b0 439A      		sbi 40-32,3
+ 507 02b2 00C0      		rjmp .L32
+ 508               	.L35:
+ 509               	.LM79:
+ 510 02b4 6270      		andi r22,lo8(2)
+ 511 02b6 7070      		andi r23,hi8(2)
+ 512 02b8 4270      		andi r20,lo8(2)
+ 513 02ba 5070      		andi r21,hi8(2)
+ 514 02bc 4095      		com r20
+ 515 02be 5095      		com r21
+ 516 02c0 6423      		and r22,r20
+ 517 02c2 7523      		and r23,r21
+ 518 02c4 672B      		or r22,r23
+ 519 02c6 01F4      		brne .+2
+ 520 02c8 00C0      		rjmp .L46
+ 521               	.LM80:
+ 522 02ca 8F2D      		mov r24,r15
+ 523 02cc 90E0      		ldi r25,lo8(0)
+ 524               	.LVL26:
+ 525 02ce 863F      		cpi r24,246
+ 526 02d0 9105      		cpc r25,__zero_reg__
+ 527 02d2 04F0      		brlt .+2
+ 528 02d4 00C0      		rjmp .L39
+ 529               	.LVL27:
+ 530               	.LM81:
+ 531 02d6 21E3      		ldi r18,lo8(49)
+ 532 02d8 2F15      		cp r18,r15
+ 533 02da 00F0      		brlo .L40
+ 534               	.LVL28:
+ 535 02dc 82E3      		ldi r24,lo8(50)
+ 536 02de F82E      		mov r15,r24
+ 537 02e0 00C0      		rjmp .L39
+ 538               	.LVL29:
+ 539               	.L33:
+ 540               	.LM82:
+ 541 02e2 4398      		cbi 40-32,3
+ 542 02e4 00C0      		rjmp .L32
+ 543               	.L36:
+ 544               	.LM83:
+ 545 02e6 86EF      		ldi r24,lo8(-10)
+ 546 02e8 F80E      		add r15,r24
+ 547 02ea 00C0      		rjmp .L39
+ 548               	.LVL30:
+ 549               	.L40:
+ 550               	.LM84:
+ 551 02ec 8AE0      		ldi r24,lo8(10)
+ 552 02ee F80E      		add r15,r24
+ 553 02f0 00C0      		rjmp .L39
+ 554               	.LFE9:
+ 556               	.global	ISR_counter
+ 557               	.global	ISR_counter
+ 558               		.section .bss
+ 561               	ISR_counter:
+ 562 0000 00        		.skip 1,0
+ 563               	.global	ms
+ 564               	.global	ms
+ 567               	ms:
+ 568 0001 0000      		.skip 2,0
+ 569               	.global	msMotStart
+ 570               	.global	msMotStart
+ 573               	msMotStart:
+ 574 0003 0000      		.skip 2,0
+ 575               	.global	msUntilInput
+ 576               	.global	msUntilInput
+ 579               	msUntilInput:
+ 580 0005 00        		.skip 1,0
+ 653               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:2      *ABS*:0000003f __SREG__
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:3      *ABS*:0000003e __SP_H__
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:4      *ABS*:0000003d __SP_L__
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:5      *ABS*:00000034 __CCP__
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:18     .text:00000000 __vector_16
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:557    .bss:00000000 ISR_counter
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:563    .bss:00000001 ms
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:575    .bss:00000005 msUntilInput
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:569    .bss:00000003 msMotStart
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:83     .text:00000076 __vector_18
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:118    .text:0000009e __vector_11
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:139    .text:000000b2 uart_send_char
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:161    .text:000000c2 uart_send_string
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:203    .text:000000e2 uart_send_numb
-C:\Users\RUZS\AppData\Local\Temp/cc2BsGo7.s:273    .text:00000154 main
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:2      *ABS*:0000003f __SREG__
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:3      *ABS*:0000003e __SP_H__
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:4      *ABS*:0000003d __SP_L__
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:5      *ABS*:00000034 __CCP__
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:18     .text:00000000 __vector_16
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:561    .bss:00000000 ISR_counter
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:567    .bss:00000001 ms
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:579    .bss:00000005 msUntilInput
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:573    .bss:00000003 msMotStart
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:83     .text:00000076 __vector_18
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:118    .text:0000009e __vector_11
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:139    .text:000000b2 uart_send_char
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:161    .text:000000c2 uart_send_string
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:203    .text:000000e2 uart_send_numb
+C:\Users\RUZS\AppData\Local\Temp/ccIOZ9eQ.s:273    .text:00000154 main
 
 UNDEFINED SYMBOLS
 sprintf
